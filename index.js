@@ -19,7 +19,7 @@ const port=5000;
 const client = new MongoClient(uri, { useNewUrlParser: true});
 client.connect(err => {
     const productCollection = client.db("Online_Sports_Shop").collection("products");
-
+    const orderCollection = client.db("Online_Sports_Shop").collection("orders");
 console.log('database connected');
 
  app.get('/products', (req, res) => {
@@ -68,6 +68,39 @@ app.post('/addProduct' , (req, res) => {
                 res.send(result.modifiedCount > 0)
             })
     })
+
+    ////////order///
+
+    app.post('/order' , (req, res) => {
+        const newOrder = req.body;
+        console.log(newOrder);
+        orderCollection.insertOne(newOrder) 
+        .then(result => {
+            
+             res.send(result.insertedCount >0)
+        })
+        })
+    
+    
+        app.get('/order/:email', (req, res) => {
+         
+            orderCollection.find({"email": req.params.email})
+        
+      
+        .toArray((err,documents) =>{
+                console.log(documents);
+                res.send(documents);
+                
+               })
+        
+          })
+    
+
+
+
+
+
+
 
 /////////
      app.delete('/deleteProduct/:id', (req,res) =>{
