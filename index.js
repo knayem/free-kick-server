@@ -20,7 +20,11 @@ const client = new MongoClient(uri, { useNewUrlParser: true});
 client.connect(err => {
     const productCollection = client.db("Online_Sports_Shop").collection("products");
     const orderCollection = client.db("Online_Sports_Shop").collection("orders");
-console.log('database connected');
+    const reviewCollection = client.db("Online_Sports_Shop").collection("reviews");
+    const adminCollection = client.db("Online_Sports_Shop").collection("admins");
+    const preOrderCollection = client.db("Online_Sports_Shop").collection("preOrders");
+
+    console.log('database connected');
 
  app.get('/products', (req, res) => {
      productCollection.find()
@@ -95,6 +99,73 @@ app.post('/addProduct' , (req, res) => {
         
           })
     
+
+//////////////////////
+
+
+
+app.post('/addReview' , (req, res) => {
+    const newReview = req.body;
+    console.log(newReview);
+    reviewCollection.insertOne(newReview) 
+    .then(result => {
+         //console.log('inserted count:', result)
+         res.send(result.insertedCount >0)
+    })
+    })
+
+  
+
+    app.post('/requestPreOrder' , (req, res) => {
+      const newAppointment = req.body;
+      console.log(newAppointment);
+      appointmentCollection.insertOne(newAppointment) 
+      .then(result => {
+           //console.log('inserted count:', result)
+           res.send(result.insertedCount >0)
+      })
+      })
+
+
+      app.get('/preOrder', (req, res) => {
+        preOrderCollection.find()
+        .toArray((err, items) => {
+            res.send(items)
+        })
+    })
+
+
+
+
+
+    app.get('/reviews', (req, res) => {
+      reviewCollection.find()
+      .toArray((err, items) => {
+          res.send(items)
+      })
+  })
+
+///////////admin
+
+       app.post('/makeAdmin' , (req, res) => {
+       const newAdmin = req.body;
+       console.log(newAdmin);
+     adminCollection.insertOne(newAdmin) 
+       .then(result => {
+            //console.log('inserted count:', result)
+            res.send(result.insertedCount >0)
+       })
+       })
+
+
+       app.post('/isAdmin', (req, res) => {
+        const email = req.body.email;
+        adminCollection.find({ email: email })
+            .toArray((err, admins) => {
+                res.send(admins.length > 0);
+            })
+    })
+       
 
 
 
